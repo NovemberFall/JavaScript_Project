@@ -1,5 +1,7 @@
  ### `Weather App`
 
+- this project using the UI design(.html) from `https://github.com/iamshaunjp/modern-javascript/tree/lesson-100`
+
  - this app is going to work for any different city 
  - I am going to be using a free weather API called 
 [AccuWeather API](https://developer.accuweather.com/)
@@ -162,13 +164,139 @@ getWeather("329260")
 
 
 
+### `All kind DOM manipulation on app.js`
+
+- first, updating `app.js`
+```js
+// All kind DOM manipulation
+const cityFrom = document.getElementsByTagName('form')[0];
+
+const updateCity = async (city) => {
+    console.log(city);
+}
+
+
+cityFrom.addEventListener('submit', (e) => {
+    //prevent default action
+    e.preventDefault();
+
+    //get city value
+    const city = cityFrom.city.value.trim();
+    cityFrom.reset();
+
+    //update the ui with new city
+    updateCity(city);
+})
+```
+![](img/15.png)
+
+
+---
+`updating app.js`
+```js
+// All kind DOM manipulation
+const cityFrom = document.getElementsByTagName('form')[0];
+
+const updateCity = async (city) => {
+    const tempCityDets = await getCity(city);
+    const tempWeather = await getWeather(tempCityDets.Key);
+
+    return {
+        cityDets: tempCityDets,
+        weather: tempWeather
+    };
+}
+
+
+cityFrom.addEventListener('submit', (e) => {
+    //prevent default action
+    e.preventDefault();
+
+    //get city value
+    const city = cityFrom.city.value.trim();
+    cityFrom.reset();
+
+    //update the ui with new city
+    updateCity(city)
+        .then(data => console.log(data))
+        .catch(error => console.log(error));
+})
+```
+![](img/16.png)
+- we can see the object have been returned: 
+```js
+{
+    cityDets: tempCityDets,
+    weather: tempWeather
+}
+```
+
+###  `Shorthand Notation(简化符号)`
+```js
+const updateCity = async (city) => {
+    const cityDetails = await getCity(city);
+    const weather = await getWeather(cityDetails.Key);
+
+    return { cityDetails, weather };//shorthand notation
+}
+```
 
 
 
 
-![](img/.png)
-![](img/.png)
-![](img/.png)
+### `Updating the UI`
+
+`app.js`
+```js
+// updating the UI
+// All kind DOM manipulation
+const cityFrom = document.getElementsByTagName('form')[0];
+const card = document.querySelector('.card');
+const detatils = document.querySelector('.detail');
+
+const updateUI = (data) => {
+
+    const cityDetails = data.cityDetails;
+    const weather = data.weather;
+
+    //update deatils template
+    detatils.innerHTML = `
+    <h5 class="my-3">${cityDetails.EnglishName}</h5>
+    <div class="my-3">${weather.WeatherText}</div>
+    <div class="display-4 my-4">
+      <span>${weather.Temperature.Metric.Value}</span>
+      <span>&deg;C</span>
+    </div>
+    `;
+}
+
+const updateCity = async (city) => {
+    const cityDetails = await getCity(city);
+    const weather = await getWeather(cityDetails.Key);
+
+    return { cityDetails, weather };//shorthand notation
+}
+
+
+cityFrom.addEventListener('submit', (e) => {
+    //prevent default action
+    e.preventDefault();
+
+    //get city value
+    const city = cityFrom.city.value.trim();
+    cityFrom.reset();
+
+    //update the ui with new city
+    updateCity(city)
+        .then(data => updateUI(data))
+        .catch(error => console.log(error));
+})
+
+```
+![](img/20.png)
+
+
+
 ![](img/.png)
 ![](img/.png)
 ![](img/.png)
