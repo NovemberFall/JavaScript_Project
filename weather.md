@@ -246,6 +246,40 @@ const updateCity = async (city) => {
 
 ### `Updating the UI`
 
+- first, we updating `index.html`
+```html
+<body>
+  <div class="container my-5 mx-auto">
+    <h1 class="text-muted text-center my-4">Weather</h1>
+
+    <form action="" class="change-location my-4 text-center text-muted">
+      <label for="city">Enter a location for weather information</label>
+      <input type="text" name="city" class="form-control p-4">
+    </form>
+
+    <div class="card shadow-lg rounded d-none">
+      <img src="https://via.placeholder.com/400x300" class="time card-img-top">
+      <div class="icon bg-light mx-auto text-center">
+        <img src="" alt="">
+      </div>
+      <div class="text-muted text-uppercase text-center detail">
+        <h5 class="my-3">City name</h5>
+        <div class="my-3">Weather condition</div>
+        <div class="display-4 my-4">
+          <span>temp</span>
+          <span>&deg;C</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="scripts/forecast.js"></script>
+  <script src="scripts/app.js"></script>
+</body>
+```
+- to update the html, we add a new class `d-none` for we want to delete it since we hope that it will display nothing when the user loading in frist time
+
+
 `app.js`
 ```js
 // updating the UI
@@ -268,6 +302,11 @@ const updateUI = (data) => {
       <span>&deg;C</span>
     </div>
     `;
+
+    //remove the d-none class if present
+    if (card.classList.contains('d-none')) {
+        card.classList.remove('d-none');
+    } //this step's purpose is to present nothing when it is default
 }
 
 const updateCity = async (city) => {
@@ -297,10 +336,119 @@ cityFrom.addEventListener('submit', (e) => {
 
 
 
-![](img/.png)
-![](img/.png)
-![](img/.png)
-![](img/.png)
+
+### `Destructuring 解构赋值`
+```js
+const updateUI = (data) => {
+
+    // const cityDetails = data.cityDetails;
+    // const weather = data.weather;
+
+    // destructuring properties
+    const { cityDetails, weather } = data;  //Destructuring Properties
+
+    //update deatils template
+    detatils.innerHTML = `
+    <h5 class="my-3">${cityDetails.EnglishName}</h5>
+    <div class="my-3">${weather.WeatherText}</div>
+    <div class="display-4 my-4">
+      <span>${weather.Temperature.Metric.Value}</span>
+      <span>&deg;C</span>
+    </div>
+    `;
+
+    //remove the d-none class if present
+    if (card.classList.contains('d-none')) {
+        card.classList.remove('d-none');
+    }
+}
+```
+
+
+
+
+### `Weather Icons and Images`
+
+- the icon that I'm going to use are originally from climate coms by Adamwhitcroft 
+[Adamwhitcroft.com](http://adamwhitcroft.com/climacons/) 
+
+- so we can download all `.svg` from this website
+![](img/21.png)
+
+- so we create a folder that we download from [Adamwhitcroft.com](http://adamwhitcroft.com/climacons/) 
+![](img/38.png)
+![](img/39.png)
+
+
+### `updating app.js final version`
+```js
+// Destructuring
+const cityFrom = document.getElementsByTagName('form')[0];
+const card = document.querySelector('.card');
+const detatils = document.querySelector('.detail');
+const time = document.querySelector('img.time');
+const icon = document.getElementById('image');
+// const icon = document.querySelector('.icon img');
+
+const updateUI = (data) => {
+    // destructuring properties
+    const { cityDetails, weather } = data;
+
+    //update deatils template
+    detatils.innerHTML = `
+    <h5 class="my-3">${cityDetails.EnglishName}</h5>
+    <div class="my-3">${weather.WeatherText}</div>
+    <div class="display-4 my-4">
+      <span>${weather.Temperature.Metric.Value}</span>
+      <span>&deg;C</span>
+    </div>
+    `;
+
+    //update the day/night & icon images
+    const iconSrc = `img/icons/${weather.WeatherIcon}.svg`;
+    icon.setAttribute('src', iconSrc);
+
+    let timeSrc = null;
+    if (weather.IsDayTime) {
+        timeSrc = 'img/day.svg';
+    } else {
+        timeSrc = 'img/night.svg';
+    }
+    time.setAttribute('src', timeSrc);
+
+    //remove the d-none class if present
+    if (card.classList.contains('d-none')) {
+        card.classList.remove('d-none');
+    }
+}
+
+const updateCity = async (city) => {
+    const cityDetails = await getCity(city);
+    const weather = await getWeather(cityDetails.Key);
+
+    return { cityDetails, weather };//shorthand notation
+}
+
+
+cityFrom.addEventListener('submit', (e) => {
+    //prevent default action
+    e.preventDefault();
+
+    //get city value
+    const city = cityFrom.city.value.trim();
+    cityFrom.reset();
+
+    //update the ui with new city
+    updateCity(city)
+        .then(data => updateUI(data))
+        .catch(error => console.log(error));
+})
+
+```
+![](img/40.png)
+
+
+
 
 
 
