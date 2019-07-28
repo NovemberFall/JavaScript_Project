@@ -222,3 +222,6 @@ cityFrom.addEventListener('submit', (e) => {
         .then(data => updateUI(data))
         .catch(error => console.log(error));
 })
+
+
+
