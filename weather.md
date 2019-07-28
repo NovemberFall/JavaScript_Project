@@ -450,6 +450,12 @@ cityFrom.addEventListener('submit', (e) => {
 
 
 
+### `Ternary Operator`
+
+
+
+
+
 
 
 
