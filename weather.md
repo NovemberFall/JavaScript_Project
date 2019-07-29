@@ -452,6 +452,34 @@ cityFrom.addEventListener('submit', (e) => {
 
 ### `Ternary Operator`
 
+```js
+const updateUI = (data) => {
+    // destructuring properties
+    const { cityDetails, weather } = data;
+
+    //update deatils template
+    detatils.innerHTML = `
+    <h5 class="my-3">${cityDetails.EnglishName}</h5>
+    <div class="my-3">${weather.WeatherText}</div>
+    <div class="display-4 my-4">
+      <span>${weather.Temperature.Metric.Value}</span>
+      <span>&deg;C</span>
+    </div>
+    `;
+
+    //update the day/night & icon images
+    const iconSrc = `img/icons/${weather.WeatherIcon}.svg`;
+    icon.setAttribute('src', iconSrc);
+
+    let timeSrc = weather.IsDayTime ? 'img/day.svg' : 'img/night.svg';
+    time.setAttribute('src', timeSrc);
+
+    //remove the d-none class if present
+    if (card.classList.contains('d-none')) {
+        card.classList.remove('d-none');
+    }
+}
+```
 
 
 
@@ -460,7 +488,5 @@ cityFrom.addEventListener('submit', (e) => {
 
 
 
-
-
-
+### `local Storage`
 
