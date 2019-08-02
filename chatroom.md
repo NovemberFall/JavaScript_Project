@@ -423,3 +423,243 @@ class ChatUI {
 ![](img/2019-08-02-13-49-54.png)
 
 
+
+
+
+### `Formating the Dates`
+
+- import a Date library
+`<script src="http://cdn.date-fns.org/v1.9.0/date_fns.min.js"></script>`
+
+- now we can using this library's function to implement our date format functing 
+
+`updating ui.js`
+```js
+class ChatUI {
+    constructor(list) {
+        this.list = list;
+    }
+    render(data) {
+        const when = dateFns.distanceInWordsToNow(
+            data.created_at.toDate(),
+            { addSuffix: true }
+        );
+        const html = `
+        <li class="list-group-item">
+            <span class="username">${data.username}</span>
+            <span class="message">${data.message}</span>
+            <div class="time">${when}</div>
+        </li>
+        `;
+        this.list.innerHTML += html;
+    }
+}
+```
+
+`updating styles.css`
+```css
+.username{
+    font-weight: bold;
+}
+.time{
+    font-size: 0.7em;
+    color:#999;
+}
+```
+![](img/2019-08-02-14-23-26.png)
+
+
+
+
+
+
+
+### `Sending New Chats`
+`updating app.js`
+```js
+//dom queries
+const chatList = document.querySelector('.chat-list');
+const nweChatForm = document.querySelector('.new-chat');
+
+//add a new chat
+nweChatForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const message = nweChatForm.message.value.trim();
+    chatroom.addChat(message)
+        .then(() => { nweChatForm.reset() })
+        .catch(err => console.log(err));
+});
+
+//class instances
+const chatUI = new ChatUI(chatList);
+const chatroom = new Chatroom('gaming', 'shaun');
+
+//get chats and render
+chatroom.getChats((data) => {
+    chatUI.render(data);
+});
+```
+![](img/2019-08-02-14-38-21.png)
+
+
+
+
+
+
+### `Changing Username & Local Storage`
+`updating styles.css for updating message`
+```css
+.update-mssg{
+    text-align: center;
+    margin: 20px auto;
+}
+```
+
+`updating app.js`
+```js
+//dom queries
+const chatList = document.querySelector('.chat-list');
+const nweChatForm = document.querySelector('.new-chat');
+const newNameForm = document.querySelector('.new-name');
+const updateMssg = document.querySelector('.update-mssg');
+
+//add a new chat
+nweChatForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const message = nweChatForm.message.value.trim();
+    chatroom.addChat(message)
+        .then(() => { nweChatForm.reset() })
+        .catch(err => console.log(err));
+});
+
+//update username
+newNameForm.addEventListener('submit', e => {
+    e.preventDefault();
+    //upadte name via chatroom
+    const newName = newNameForm.name.value.trim();
+    chatroom.updateName(newName);
+    //reset the form
+    newNameForm.reset();
+    //show then hide update message
+    updateMssg.innerHTML = `Your name was updated to ${newName}`;
+    setTimeout(() => {
+        updateMssg.innerText = ''
+    }, 3000)
+})
+
+//check local storage for a name
+const username = localStorage.username ? localStorage.username : 'anon';
+
+//class instances
+const chatUI = new ChatUI(chatList);
+const chatroom = new Chatroom('gaming', username);
+
+//get chats and render
+chatroom.getChats((data) => {
+    chatUI.render(data);
+});
+```
+
+`updating chat.js`
+```js
+    updateName(username) {
+        this.username = username;
+        localStorage.setItem('username', username);
+    }
+```
+![](img/2019-08-02-15-11-26.png)
+
+
+
+
+### `updating the Room`
+
+`updating the ui.js`
+```js
+class ChatUI {
+    constructor(list) {
+        this.list = list;
+    }
+    clear() {
+        this.list.innerHTML = '';
+    }
+    render(data) {
+        const when = dateFns.distanceInWordsToNow(
+            data.created_at.toDate(),
+            { addSuffix: true }
+        );
+        const html = `
+        <li class="list-group-item">
+            <span class="username">${data.username}</span>
+            <span class="message">${data.message}</span>
+            <div class="time">${when}</div>
+        </li>
+        `;
+        this.list.innerHTML += html;
+    }
+}
+```
+- adding a `clear()` function to clear all message when we click the other button of chat room
+
+`updating app.js`
+```js
+//dom queries
+const chatList = document.querySelector('.chat-list');
+const nweChatForm = document.querySelector('.new-chat');
+const newNameForm = document.querySelector('.new-name');
+const updateMssg = document.querySelector('.update-mssg');
+const rooms = document.querySelector('.chat-rooms');
+
+//add a new chat
+nweChatForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const message = nweChatForm.message.value.trim();
+    chatroom.addChat(message)
+        .then(() => { nweChatForm.reset() })
+        .catch(err => console.log(err));
+});
+
+//update username
+newNameForm.addEventListener('submit', e => {
+    e.preventDefault();
+    //upadte name via chatroom
+    const newName = newNameForm.name.value.trim();
+    chatroom.updateName(newName);
+    //reset the form
+    newNameForm.reset();
+    //show then hide update message
+    updateMssg.innerHTML = `Your name was updated to ${newName}`;
+    setTimeout(() => {
+        updateMssg.innerText = ''
+    }, 3000)
+})
+
+//update the chat room
+rooms.addEventListener('click', e => {
+    if (e.target.tagName === 'BUTTON') {
+        chatUI.clear();
+        chatroom.updateRoom(e.target.getAttribute('id'));
+        chatroom.getChats(chat => {
+            chatUI.render(chat);
+        })
+    }
+})
+
+//check local storage for a name
+const username = localStorage.username ? localStorage.username : 'anon';
+
+//class instances
+const chatUI = new ChatUI(chatList);
+const chatroom = new Chatroom('gaming', username);
+
+//get chats and render
+chatroom.getChats((data) => {
+    chatUI.render(data);
+});
+```
+
+![](img/2019-08-02-15-29-59.png)
+
+
+
+
