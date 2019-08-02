@@ -430,6 +430,10 @@ class ChatUI {
 
 - import a Date library
 `<script src="http://cdn.date-fns.org/v1.9.0/date_fns.min.js"></script>`
+- *Warn:* if we push our web page into github.io, we can not use `http://` , so we need to import 
+`https://` 
+
+` <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.9.0/date_fns.min.js"></script>`
 
 - now we can using this library's function to implement our date format functing 
 
