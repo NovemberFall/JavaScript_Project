@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,9 +58,29 @@
             <div class="update-mssg"></div>
         </form>
     </div>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <!-- <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-app.js"></script> -->
+    <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-firestore.js"></script>
 
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyB_WkF8W8zxeWMRAewOc42F6wYcJhQ4L00",
+            authDomain: "real-time-chat-678c1.firebaseapp.com",
+            databaseURL: "https://real-time-chat-678c1.firebaseio.com",
+            projectId: "real-time-chat-678c1",
+            storageBucket: "",
+            messagingSenderId: "365149742158",
+            appId: "1:365149742158:web:887553478f9e22c8"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
     <script src="scripts/chat.js"></script>
     <script src="scripts/ui.js"></script>
     <script src="scripts/app.js"></script>
 </body>
+
 </html>
