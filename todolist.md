@@ -63,9 +63,76 @@ addForm[0].addEventListener('submit', e=>{
     if(todo.length){
         generateTmeplate(todo);
         addForm.reset();
+        //The reset() method resets the values of all elements in a form (same as clicking the Reset button).
     }    
 });
 ```
+- 
+- let's look at the `(list-group)`list's children 
+```js
+//add a new element into addForm
+addForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const todo = addForm.add.value.trim();
+    console.log(todo);
+
+    console.log(list);
+    console.log(list.children);
+    console.log(list.children.textContent);
+
+    if (todo.length) {
+        generateTmeplate(todo);
+        addForm.reset();
+    }
+});
+```
+![](img/2020-01-10-17-13-25.png)
+-
+- print every list.child's textContent:
+```js
+//add a new element into addForm
+addForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const todo = addForm.add.value.trim();
+    console.log(todo);
+
+    // console.log(list);
+    // console.log(list.children);
+
+    const arr = list.children;
+    for (let i = 0; i < arr.length; i++) {
+        console.log(arr[i].textContent);
+    }
+
+    if (todo.length) {
+        generateTmeplate(todo);
+        addForm.reset();
+    }
+});
+```
+![](img/2020-01-10-17-38-44.png)
+-
+- Note `list.children` is not an array, It is `HTMLCollection`, and it does not have `forEach` method, thus, we need to convert it to array
+- 2nd way
+```js
+    Array.from(list.children).forEach((element) => {
+        console.log(element.textContent);
+    });
+
+```
+-
+- or using spread operator:
+```js
+    [...list.children].forEach((element) => {
+        console.log(element.textContent);
+    })
+```
+![](img/2020-01-10-19-23-00.png)
+---
+
+
+
+
 
 - Now, let's adding a delete event
 ```js
@@ -144,6 +211,93 @@ search.addEventListener('keyup', ()=>{
 });
 ```
 ![](img/19.png)
+---
+
+
+
+## 2ND way:
+```js
+const addForm = document.querySelector('.add');
+const list = document.querySelector('.todos');
+const search = document.getElementById('search');
+
+const generateTmeplate = (todo) => {
+    const html = `
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>${todo}</span>
+            <i class="far fa-trash-alt delete"></i>
+        </li>
+    `;
+    list.innerHTML += html;
+};
+
+
+//add a new element into addForm
+addForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const todo = addForm.add.value.trim();
+    console.log(todo);
+
+    // console.log(list);
+    // console.log(list.children);
+    // const arr = list.children;
+    // for (let i = 0; i < arr.length; i++) {
+    //     console.log(arr[i].textContent);
+    // }
+
+
+    // Array.from(list.children).forEach((element) => {
+    //     console.log(element.textContent);
+    // });
+
+    [...list.children].forEach((element) => {
+        console.log(element.textContent);
+    })
+
+
+    if (todo.length) {
+        generateTmeplate(todo);
+        addForm.reset();
+    }
+});
+
+
+//delete todos
+list.addEventListener('click', (e) => {
+    // console.log(e.target.parentElement);
+    if (e.target.classList.contains('delete')) {
+        e.target.parentElement.remove();
+    }
+});
+
+
+//adding Search Event, but we need to implement a filter todo function
+search.addEventListener('keyup', () => {
+    console.log(search.value);
+
+    const term = search.value.trim().toLowerCase();
+    filterTodos(term);
+});
+
+//The Array.from() method returns an Array object from any object with a length property or an iterable object
+
+//The filter() method creates a new array with all elements that pass the test implemented by the provided function.
+
+
+const filterTodos = (term) => {
+    [...list.children].filter((todo) => {
+        return !todo.textContent.includes(term);
+    }).forEach((todo) => {
+        return todo.classList.add('filtered');
+    });
+
+    [...list.children].filter((todo) => {
+        return todo.textContent.includes(term);
+    }).forEach((todo) => {
+        return todo.classList.remove('filtered');
+    });
+};
+```
 
 
 
